@@ -22,8 +22,14 @@ else:
 
 
 async def start(update: Update, context):
-    print("Start command received.")
+    await update.message.reply_text("Hello! I am your bot. How can I assist you today?")
+
+async def bye(update: Update, context):
+    await update.message.reply_text("Goodbye! Have a great day!")
 
 
 application.add_handler(CommandHandler("start", start))
+application.add_handler(CommandHandler("bye", bye))
+
+application.run_polling()
 
