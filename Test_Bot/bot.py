@@ -36,8 +36,14 @@ async def answer_message(update: Update, context):
     await update.message.reply_text(f"{user.first_name}, you said: {message}")
 
 
+async def game(update: Update, context):
+    user = update.effective_user
+    await update.message.reply_text(f"{user.first_name}, let's play a game! i choose number between 1 and 10. can you guess it?")
+
+
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CommandHandler("bye", bye))
+application.add_handler(CommandHandler("game", game))
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, answer_message))
 
 application.run_polling()
