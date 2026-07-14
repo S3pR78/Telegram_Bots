@@ -2,7 +2,8 @@ import os
 
 from dotenv import load_dotenv
 
-from telegram.ext import Application
+from telegram import Update
+from telegram.ext import Application,  ContextTypes
 
 load_dotenv()
 
@@ -20,3 +21,8 @@ if application is None:
     print("Failed to create application. Please check your token and try again.")
 else:
     print("Application created successfully.")
+
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    await update.message.reply_text(f"Hello {user.first_name}! I am your bot. How can I assist you today?")
