@@ -65,9 +65,15 @@ async def game(update: Update, context):
     print(f"Secret number for {user.first_name}: {secret_number}")  # For debugging purposes
 
 
+async def rps(update: Update, context):
+    user = update.effective_user
+    await update.message.reply_text(f"{user.first_name}, let's play Rock-Paper-Scissors! Please choose one: rock, paper, or scissors.")
+
+
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CommandHandler("bye", bye))
 application.add_handler(CommandHandler("game", game))
+application.add_handler(CommandHandler("rps", rps))
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, answer_message))
 
 application.run_polling()
