@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 from telegram import Update
-from telegram.ext import Application,  ContextTypes
+from telegram.ext import Application,  ContextTypes , CommandHandler
 
 load_dotenv()
 
@@ -26,3 +26,8 @@ else:
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     await update.message.reply_text(f"Hello {user.first_name}! I am your bot. How can I assist you today?")
+
+application.add_handler(CommandHandler("start", start))
+
+
+application.run_polling()
