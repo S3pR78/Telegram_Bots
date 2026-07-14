@@ -1,4 +1,5 @@
 import os
+import random
 
 from dotenv import load_dotenv
 from telegram import Update
@@ -33,12 +34,35 @@ async def bye(update: Update, context):
 async def answer_message(update: Update, context):
     user = update.effective_user
     message = update.message.text
-    await update.message.reply_text(f"{user.first_name}, you said: {message}")
+    
+    if  not message.isdigit():
+        await update.message.reply_text("Please send a number to play the game.")
+        return
+    
+    secret_number = context.user_data['secret_number']
+    message = int(message)
+
+    if secret_number is None:
+        await update.message.reply_text('you have to inizialize the game first with /game')
+        return
+    
+    if(message == secret_number):
+        await update.message.reply_text(f"{user.first_name} won the game the number was {secret_number}")
+        return
+
+    if( message < secret_number):
+        await update.message.reply_text("my number is bigger")
+    else:
+        await update.message.reply_text("my number is smaller")
+    
 
 
 async def game(update: Update, context):
+    secret_number = random.randint(1, 10)
     user = update.effective_user
+    context.user_data['secret_number'] = secret_number
     await update.message.reply_text(f"{user.first_name}, let's play a game! i choose number between 1 and 10. can you guess it?")
+    print(f"Secret number for {user.first_name}: {secret_number}")  # For debugging purposes
 
 
 application.add_handler(CommandHandler("start", start))
