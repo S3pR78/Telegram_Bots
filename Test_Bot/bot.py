@@ -2,7 +2,8 @@ import os
 
 from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import Application , CommandHandler
+from telegram.ext import Application , CommandHandler , MessageHandler, filters
+
 load_dotenv()
 
 token = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -22,10 +23,12 @@ else:
 
 
 async def start(update: Update, context):
-    await update.message.reply_text("Hello! I am your bot. How can I assist you today?")
+    user = update.effective_user
+    await update.message.reply_text(f"Hello {user.first_name}! I am your bot. How can I assist you today?")
 
 async def bye(update: Update, context):
-    await update.message.reply_text("Goodbye! Have a great day!")
+    user = update.effective_user
+    await update.message.reply_text(f"Goodbye {user.first_name}! Have a great day!")
 
 
 application.add_handler(CommandHandler("start", start))
