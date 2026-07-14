@@ -33,31 +33,63 @@ async def bye(update: Update, context):
 
 async def answer_message(update: Update, context):
     user = update.effective_user
-    message = update.message.text
-    
-    if  not message.isdigit():
-        await update.message.reply_text("Please send a number to play the game.")
-        return
-    
-    secret_number = context.user_data['secret_number']
-    message = int(message)
 
-    if secret_number is None:
-        await update.message.reply_text('you have to inizialize the game first with /game')
-        return
-    
-    if(message == secret_number):
-        await update.message.reply_text(f"{user.first_name} won the game the number was {secret_number}")
+    if context.user_data.get('game') is None:
+        await update.message.reply_text("Please start a game first by using /guess_number or /rps.")
         return
 
-    if( message < secret_number):
-        await update.message.reply_text("my number is bigger")
-    else:
-        await update.message.reply_text("my number is smaller")
+
+    if context.user_data['game'] == 'guess_number':
+        message = update.message.text
     
+        if not message.isdigit():
+            await update.message.reply_text("Please send a number to play the game.")
+            return
+        
+        secret_number = context.user_data['secret_number']
+        message = int(message)
+
+        if secret_number is None:
+            await update.message.reply_text('you have to initialize the game first with /guess_number')
+            return
+        
+        if(message == secret_number):
+            await update.message.reply_text(f"{user.first_name} won the game the number was {secret_number}")
+            context.user_data['game'] = None
+            return
+
+        if( message < secret_number):
+            await update.message.reply_text("my number is bigger")
+        else:
+            await update.message.reply_text("my number is smaller")
+
+    
+    if context.user_data['game'] == 'rps':
+        user_choice = update.message.text.lower()
+        choices = ['rock', 'paper', 'scissors']
+        
+        if user_choice not in choices:
+            await update.message.reply_text("Invalid choice. Please choose rock, paper, or scissors.")
+            return
+        
+        bot_choice = random.choice(choices)
+        print(f"User choice: {user_choice}, Bot choice: {bot_choice}")  # For debugging purposes
+        await update.message.reply_text(f"I chose {bot_choice}.")
+
+        if user_choice == bot_choice:
+            await update.message.reply_text("It's a tie!")
+        elif (user_choice == 'rock' and bot_choice == 'scissors') or \
+             (user_choice == 'paper' and bot_choice == 'rock') or \
+             (user_choice == 'scissors' and bot_choice == 'paper'): 
+            await update.message.reply_text("You win!")
+            context.user_data['game'] = None
+        else:
+            await update.message.reply_text("I win!") 
+            context.user_data['game'] = None
 
 
-async def game(update: Update, context):
+async def guess_number(update: Update, context):
+    context.user_data['game'] = 'guess_number'
     secret_number = random.randint(1, 10)
     user = update.effective_user
     context.user_data['secret_number'] = secret_number
@@ -67,12 +99,13 @@ async def game(update: Update, context):
 
 async def rps(update: Update, context):
     user = update.effective_user
+    context.user_data['game'] = 'rps'
     await update.message.reply_text(f"{user.first_name}, let's play Rock-Paper-Scissors! Please choose one: rock, paper, or scissors.")
 
 
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CommandHandler("bye", bye))
-application.add_handler(CommandHandler("game", game))
+application.add_handler(CommandHandler("guess_number", guess_number))
 application.add_handler(CommandHandler("rps", rps))
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, answer_message))
 
