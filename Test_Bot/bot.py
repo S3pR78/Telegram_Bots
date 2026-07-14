@@ -38,7 +38,7 @@ async def answer_message(update: Update, context):
 
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CommandHandler("bye", bye))
-application.add_handler(MessageHandler(filters.TEXT, answer_message))
+application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, answer_message))
 
 application.run_polling()
 
