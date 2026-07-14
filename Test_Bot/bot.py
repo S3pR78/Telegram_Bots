@@ -30,9 +30,15 @@ async def bye(update: Update, context):
     user = update.effective_user
     await update.message.reply_text(f"Goodbye {user.first_name}! Have a great day!")
 
+async def answer_message(update: Update, context):
+    user = update.effective_user
+    message = update.message.text
+    await update.message.reply_text(f"{user.first_name}, you said: {message}")
+
 
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CommandHandler("bye", bye))
+application.add_handler(MessageHandler(filters.TEXT, answer_message))
 
 application.run_polling()
 
