@@ -1,2 +1,5 @@
-Test_Bot/.env
-Test_Bot/.bot-env
+**/.bot-env/
+**/.env
+**/__pycache__/
+*.pyc
+.pytest_cache/
